@@ -1,12 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "tJLsG+fdWbk=",
+  "dgSpecHash": "qow9TVK5GSs=",
   "success": true,
   "projectFilePath": "C:\\Users\\GIAN FRANCO\\Desktop\\6TO\\test2\\Consumer\\Consumer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\confluent.kafka\\2.6.0\\confluent.kafka.2.6.0.nupkg.sha512",
     "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\librdkafka.redist\\2.6.0\\librdkafka.redist.2.6.0.nupkg.sha512",
-    "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\system.memory\\4.5.0\\system.memory.4.5.0.nupkg.sha512"
+    "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\system.memory\\4.5.0\\system.memory.4.5.0.nupkg.sha512",
+    "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.32\\microsoft.netcore.app.ref.6.0.32.nupkg.sha512",
+    "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.32\\microsoft.windowsdesktop.app.ref.6.0.32.nupkg.sha512",
+    "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.32\\microsoft.aspnetcore.app.ref.6.0.32.nupkg.sha512",
+    "C:\\Users\\GIAN FRANCO\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.32\\microsoft.netcore.app.host.win-x64.6.0.32.nupkg.sha512"
   ],
   "logs": []
 }
