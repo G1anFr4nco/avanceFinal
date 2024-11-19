@@ -13,6 +13,7 @@ namespace Consumer
     class Program
     {
         private static readonly HttpClient client = new HttpClient();
+        private static Usuario currentUser = null; // Usuario actual (primer usuario recibido)
 
         static async Task Main(string[] args)
         {
@@ -39,6 +40,13 @@ namespace Consumer
                 {
                     var consumeResult = consumer.Consume(CancellationToken.None);
                     var usuario = JsonSerializer.Deserialize<Usuario>(consumeResult.Message.Value);
+
+                    // Asignar el primer usuario como "usuario actual"
+                    if (currentUser == null)
+                    {
+                        currentUser = usuario;
+                        Console.WriteLine($"Usuario actual asignado: {JsonSerializer.Serialize(currentUser)}");
+                    }
 
                     // Actualizar el conteo para cada música, artista y género que le gusta al usuario
                     foreach (var musica in usuario.Musicas)
@@ -73,16 +81,56 @@ namespace Consumer
                     var topGeneros = generosCount.OrderByDescending(x => x.Value).Take(5)
                         .Select(x => new { nombre = x.Key, conteo = x.Value }).ToList();
 
-                    // Crear el objeto con el top de cada categoría
-                    var topData = new
+                    // Cálculo de tops relacionados para el usuario actual
+                    var userGenres = new HashSet<string>(currentUser.Generos);
+                    var userArtists = new HashSet<string>(currentUser.Artistas);
+                    var userMusicas = new HashSet<string>(currentUser.Musicas);
+
+                    // Relacionar géneros y artistas
+                    var relatedSongs = usuario.Musicas
+                        .Where(musica => userGenres.Any(genero => usuario.Generos.Contains(genero)) && !userMusicas.Contains(musica)) // Filtrar música que ya está en los gustos
+                        .GroupBy(musica => musica)
+                        .Select(g => new { nombre = g.Key, conteo = g.Count() })
+                        .OrderByDescending(x => x.conteo)
+                        .Take(5)
+                        .ToList();
+
+                    var relatedArtists = usuario.Artistas
+                        .Where(artista => userGenres.Any(genero => usuario.Generos.Contains(genero)) && !userArtists.Contains(artista)) // Filtrar artistas que ya están en los gustos
+                        .GroupBy(artista => artista)
+                        .Select(g => new { nombre = g.Key, conteo = g.Count() })
+                        .OrderByDescending(x => x.conteo)
+                        .Take(5)
+                        .ToList();
+
+                    var artistSongs = usuario.Musicas
+                        .Where(musica => userArtists.Any(artista => usuario.Artistas.Contains(artista)) && !userMusicas.Contains(musica)) // Filtrar canciones de artistas ya escuchados
+                        .GroupBy(musica => musica)
+                        .Select(g => new { nombre = g.Key, conteo = g.Count() })
+                        .OrderByDescending(x => x.conteo)
+                        .Take(5)
+                        .ToList();
+
+                    // Crear el objeto con los nuevos datos a enviar
+                    var dataToSend = new
                     {
-                        musicas = topMusicas,
-                        artistas = topArtistas,
-                        generos = topGeneros
+                        currentUser = currentUser, // Usuario actual
+                        topData = new
+                        {
+                            musicas = topMusicas,
+                            artistas = topArtistas,
+                            generos = topGeneros
+                        },
+                        relatedData = new
+                        {
+                            relatedSongs = relatedSongs,
+                            relatedArtists = relatedArtists,
+                            artistSongs = artistSongs
+                        }
                     };
 
-                    // Enviar el topData al servidor Node.js
-                    var json = JsonSerializer.Serialize(topData);
+                    // Enviar los datos al servidor Node.js
+                    var json = JsonSerializer.Serialize(dataToSend);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
                     await client.PostAsync("http://localhost:3000/update", content);
 
@@ -90,6 +138,7 @@ namespace Consumer
 
                     Thread.Sleep(1000);  // Retardo de 1 segundo entre cada usuario
                 }
+
             }
             catch (OperationCanceledException)
             {
@@ -100,9 +149,9 @@ namespace Consumer
 
     public class Usuario
     {
-        public string Nombre { get; set; }
-        public List<string> Musicas { get; set; }
-        public List<string> Artistas { get; set; }
-        public List<string> Generos { get; set; }
+        public string Nombre { get; set; } = string.Empty; // Inicialización segura
+        public List<string> Musicas { get; set; } = new List<string>();
+        public List<string> Artistas { get; set; } = new List<string>();
+        public List<string> Generos { get; set; } = new List<string>();
     }
 }
