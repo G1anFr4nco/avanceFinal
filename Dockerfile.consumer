@@ -1,0 +1,20 @@
+# Etapa de construcción
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+
+# Copiar el archivo csproj y restaurar las dependencias
+COPY ["Consumer/Consumer.csproj", "Consumer/"]
+RUN dotnet restore "Consumer/Consumer.csproj"
+
+# Copiar el resto de los archivos y construir la aplicación
+COPY . . 
+WORKDIR "/src/Consumer"
+RUN dotnet build "Consumer.csproj" -c Release -o /app/build
+
+# Etapa de publicación
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS publish
+WORKDIR /app
+COPY --from=build /app/build .
+
+# Establecer el punto de entrada para la aplicación
+ENTRYPOINT ["dotnet", "Consumer.dll"]
