@@ -21,7 +21,7 @@ namespace Consumer
             {
                 GroupId = "music-preferences-group",
                 BootstrapServers = "localhost:9092",
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Latest
             };
 
             using var consumer = new ConsumerBuilder<Ignore, string>(config).Build();

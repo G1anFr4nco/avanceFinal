@@ -4,173 +4,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top Musical</title>
+  <title>Top Canciones</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container-fluid {
+      display: flex;
+      height: 100vh;
+      flex-direction: row;
+    }
+
+    .left,
+    .right {
+      width: 25%;
+      padding: 20px;
+    }
+
+    .middle {
+      width: 50%;
+      padding: 20px;
+    }
+
+    .list-group-item {
+      background-color: #2c2c2c;
+      border: none;
+      color: white;
+    }
+
+    .card-img-top {
+      width: 100%;
+      height: auto;
+    }
+
+    .card-body {
+      padding: 10px;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    .card-title,
+    .card-text {
+      text-align: center;
+    }
+
+    .placeholder-list {
+      height: 200px;
+      /* Espacio reservado para la lista */
+      overflow-y: auto;
+      /* Permitir desplazamiento si excede el espacio */
+      border: 1px solid #2c2c2c;
+      padding: 10px;
+      background-color: #1c1c1c;
+      /* Fondo para destacar la reserva de espacio */
+      border-radius: 5px;
+    }
+
+    .placeholder-list:empty::before {
+      content: 'Cargando...';
+      /* Placeholder para listas vacías */
+      color: gray;
+      display: block;
+      text-align: center;
+      padding-top: 50px;
+      /* Ajustar verticalmente */
+    }
+
+    .top-list {
+      height: 300px;
+      /* Mayor altura para las listas de los tops */
+      overflow-y: auto;
+      border: 1px solid #2c2c2c;
+      padding: 10px;
+      background-color: #1c1c1c;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 
-<body class="bg-dark text-white">
-
-  <!-- Header -->
-  <header class="bg-black text-warning p-3 mb-4">
-    <div class="container d-flex justify-content-between align-items-center">
-      <div class="fs-4 fw-bold">SoloGuitar</div>
-      <nav>
-        <a href="#" class="text-warning me-3">Tendencias</a>
-        <a href="#" class="text-warning me-3">Recientes</a>
-        <a href="#" class="text-warning me-3">Nivel Básico</a>
-        <a href="#" class="text-warning me-3">Nivel Intermedio</a>
-        <a href="#" class="text-warning">Nivel Avanzado</a>
-      </nav>
-      <div class="text-warning">Username</div>
+<body>
+  <div class="container-fluid">
+    <!-- 1/4 Left: Datos del Usuario -->
+    <div class="left">
+      <h3 id="usuarioNombre"></h3>
+      <p><strong>Musicas:</strong> <span id="usuarioMusicas"></span></p>
+      <p><strong>Artistas:</strong> <span id="usuarioArtistas"></span></p>
+      <p><strong>Generos:</strong> <span id="usuarioGeneros"></span></p>
     </div>
-  </header>
 
-  <!-- Main Content -->
-  <main class="container">
-    <div class="row">
-      <!-- Datos del Usuario -->
-      <div class="card mb-4">
-        <div class="card-header bg-danger text-white">
-          <h5>Perfil del Usuario</h5>
-        </div>
-        <div class="card-body bg-secondary">
-          <h5 id="usuarioNombre">Nombre: Usuario</h5>
-          <p><strong>Músicas Favoritas:</strong> <span id="usuarioMusicas">-</span></p>
-          <p><strong>Artistas Favoritos:</strong> <span id="usuarioArtistas">-</span></p>
-          <p><strong>Géneros Favoritos:</strong> <span id="usuarioGeneros">-</span></p>
-        </div>
-      </div>
+    <!-- 2/4 Middle: Canciones Relacionadas, Artistas Relacionados y Canciones de Spotify -->
+    <div class="middle">
+      <h3>Canciones Relacionadas</h3>
+      <ul id="relatedSongs" class="list-group placeholder-list"></ul>
 
-      <!-- Content Area -->
-      <section class="col-md-12">
-        <!-- Top Music List -->
-        <div class="card mb-4">
-          <div class="card-header bg-danger text-white">
-            <h5>Músicas más escuchadas</h5>
-          </div>
-          <div class="card-body bg-secondary">
-            <div class="d-flex gap-3 overflow-auto" id="musicasTop">
-              <!-- Aquí se mostrarán las canciones en formato de cartas -->
-            </div>
-          </div>
-        </div>
+      <h3>Artistas Relacionados</h3>
+      <ul id="relatedArtists" class="list-group placeholder-list"></ul>
 
-        <!-- Top Artists List -->
-        <div class="card mb-4">
-          <div class="card-header bg-danger text-white">
-            <h5>Artistas más populares</h5>
-          </div>
-          <div class="card-body bg-secondary">
-            <div class="d-flex gap-3 overflow-auto" id="artistasTop">
-              <!-- Aquí se mostrarán los artistas en formato de cartas -->
-            </div>
-          </div>
-        </div>
+      <h3>Canciones de Artista</h3>
+      <ul id="artistSongs" class="list-group placeholder-list"></ul>
 
-        <!-- Top Genres List -->
-        <div class="card mb-4">
-          <div class="card-header bg-danger text-white">
-            <h5>Géneros más escuchados</h5>
-          </div>
-          <div class="card-body bg-secondary">
-            <div class="d-flex gap-3 overflow-auto" id="generosTop">
-              <!-- Aquí se mostrarán los géneros en formato de cartas -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Spotify Songs -->
-        <div class="card mb-4">
-          <div class="card-header bg-danger text-white">
-            <h5>Canciones recomendadas</h5>
-          </div>
-          <div class="card-body bg-secondary">
-            <div id="spotifySongs" class="d-flex gap-3 overflow-auto">
-              <!-- Aquí se mostrarán las canciones en formato de cartas -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Canciones relacionadas -->
-        <div class="card mb-4">
-          <div class="card-header bg-danger text-white">
-            <h5>Canciones Relacionadas</h5>
-          </div>
-          <div class="card-body bg-secondary">
-            <div id="relatedSongs" class="d-flex gap-3 overflow-auto">
-              <!-- Canciones relacionadas con géneros -->
-            </div>
-          </div>
-        </div>
-
-        <!-- Artistas relacionados -->
-        <div class="card mb-4">
-          <div class="card-header bg-danger text-white">
-            <h5>Artistas Relacionados</h5>
-          </div>
-          <div class="card-body bg-secondary">
-            <div id="relatedArtists" class="d-flex gap-3 overflow-auto">
-              <!-- Artistas relacionados con géneros -->
-            </div>
-          </div>
-        </div>
-
-        
-      </section>
+      <h3>Canciones de Spotify</h3>
+      <ul id="spotifySongs" class="list-group"></ul>
     </div>
-  </main>
 
-  <!-- Footer -->
-  <footer class="bg-black text-white py-3">
-    <div class="container text-center">
-      <p>© 2024 SoloGuitar - Todos los derechos reservados</p>
-      <nav>
-        <a href="#" class="text-white me-3">Términos y condiciones</a>
-        <a href="#" class="text-white me-3">Política de seguridad</a>
-        <a href="#" class="text-white">Política de privacidad</a>
-      </nav>
+    <!-- 1/4 Right: Tops -->
+    <div class="right">
+      <h3>Top Musicas</h3>
+      <ul id="musicasTop" class="list-group top-list"></ul>
+
+      <h3>Top Artistas</h3>
+      <ul id="artistasTop" class="list-group top-list"></ul>
+
+      <h3>Top Generos</h3>
+      <ul id="generosTop" class="list-group top-list"></ul>
     </div>
-  </footer>
+  </div>
 
-  <!-- Bootstrap JS and dependencies -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.6.1/dist/socket.io.min.js"></script>
   <script>
     const socket = io();
 
-    // Función para renderizar los tops
+    // Función para renderizar los tops como listas
     function renderTop(id, data) {
       const container = document.getElementById(id);
       container.innerHTML = '';
       data.forEach(item => {
-        const card = document.createElement('div');
-        card.classList.add('card', 'bg-dark', 'text-white', 'w-25');
-        card.innerHTML = `
-          <img src="https://via.placeholder.com/150" class="card-img-top" alt="${item.nombre}">
-          <div class="card-body">
-            <h5 class="card-title">${item.nombre}</h5>
-            <p class="card-text">${item.conteo} veces</p>
-          </div>
-        `;
-        container.appendChild(card);
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item');
+        listItem.innerHTML = `${item.nombre} - ${item.conteo} veces`;
+        container.appendChild(listItem);
       });
     }
 
-    // Renderizar tops relacionados
+    // Renderizar tops relacionados como listas
     function renderRelatedTop(id, data) {
       const container = document.getElementById(id);
       container.innerHTML = '';
       data.forEach(item => {
-        const card = document.createElement('div');
-        card.classList.add('card', 'bg-dark', 'text-white', 'w-25');
-        card.innerHTML = `
-      <img src="https://via.placeholder.com/150" class="card-img-top" alt="${item.nombre}">
-      <div class="card-body">
-        <h5 class="card-title">${item.nombre}</h5>
-      </div>
-    `;
-        container.appendChild(card);
+        const listItem = document.createElement('li');
+        listItem.classList.add('list-group-item');
+        listItem.innerHTML = item.nombre;
+        container.appendChild(listItem);
       });
     }
 
@@ -232,16 +213,13 @@
         const songsContainer = document.getElementById('spotifySongs');
         songsContainer.innerHTML = '';
         data.albums.items.forEach(album => {
-          const card = document.createElement('div');
-          card.classList.add('card', 'bg-dark', 'text-white', 'w-25');
-          card.innerHTML = `
-            <img src="${album.images[0].url}" class="card-img-top" alt="${album.name}">
-            <div class="card-body">
-              <h5 class="card-title">${album.name}</h5>
-              <p class="card-text">${album.artists.map(artist => artist.name).join(', ')}</p>
-            </div>
-          `;
-          songsContainer.appendChild(card);
+          const listItem = document.createElement('li');
+          listItem.classList.add('list-group-item');
+          listItem.innerHTML = `
+                        <img src="${album.images[0].url}" class="me-2" style="width: 50px; height: 50px;" alt="${album.name}">
+                        ${album.name} - ${album.artists.map(artist => artist.name).join(', ')}
+                    `;
+          songsContainer.appendChild(listItem);
         });
       } catch (error) {
         console.error('Error al obtener canciones:', error);
