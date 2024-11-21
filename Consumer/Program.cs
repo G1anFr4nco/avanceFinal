@@ -20,7 +20,7 @@ namespace Consumer
             var config = new ConsumerConfig
             {
                 GroupId = "music-preferences-group",
-                BootstrapServers = "localhost:9092",
+                BootstrapServers = "kafka:9093",
                 AutoOffsetReset = AutoOffsetReset.Latest
             };
 
@@ -35,6 +35,8 @@ namespace Consumer
                 var musicasCount = new Dictionary<string, int>();
                 var artistasCount = new Dictionary<string, int>();
                 var generosCount = new Dictionary<string, int>();
+
+                string nodeHost = Environment.GetEnvironmentVariable("NODE_HOST") ?? "http://nodejs:3000"; // Esta línea debe estar declarada correctamente
 
                 while (true)
                 {
@@ -132,7 +134,7 @@ namespace Consumer
                     // Enviar los datos al servidor Node.js
                     var json = JsonSerializer.Serialize(dataToSend);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    await client.PostAsync("http://localhost:3000/update", content);
+                    await client.PostAsync($"{nodeHost}/update", content);
 
                     Console.WriteLine("Datos enviados al servidor Node.js");
 

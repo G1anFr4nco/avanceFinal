@@ -1,20 +1,21 @@
-# Usar la imagen base oficial de Node.js
-FROM node:18
+# Usa una imagen oficial de Node.js como base
+FROM node:16
 
-# Establecer el directorio de trabajo
-WORKDIR /usr/src/app
+# Crea el directorio de trabajo
+WORKDIR /app
 
-# Copiar archivos package.json y package-lock.json (si existe)
-COPY package*.json ./
+# Copia package.json y package-lock.json (si existe)
+COPY node/package.json /app/package.json
+COPY node/package-lock.json /app/package-lock.json
 
-# Instalar las dependencias
+# Instala las dependencias
 RUN npm install
 
-# Copiar el resto de los archivos
-COPY . .
+# Copia el resto de los archivos de la aplicación al contenedor
+COPY node/ /app/
 
-# Exponer el puerto
+# Expón el puerto en el que la aplicación escuchará
 EXPOSE 3000
 
-# Comando para iniciar la aplicación
-CMD ["node", "server.js"]
+# Comando para ejecutar la aplicación
+CMD ["npm", "start"]

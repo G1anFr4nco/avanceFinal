@@ -1,12 +1,13 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Servir la carpeta pública
 app.use(express.static('public'));
@@ -30,6 +31,6 @@ app.post('/update', (req, res) => {
 });
 
 // Configuración del servidor para escuchar el puerto
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0',() => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });

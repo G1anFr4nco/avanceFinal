@@ -58,7 +58,8 @@ namespace Producer
 
         static async Task Main(string[] args)
         {
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092" };
+            var config = new ProducerConfig { BootstrapServers = "kafka:9093" }; // Cambiado de localhost:9092 a kafka:9093
+
             using var producer = new ProducerBuilder<Null, string>(config).Build();
 
             while (true)

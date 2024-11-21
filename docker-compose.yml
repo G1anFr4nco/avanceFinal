@@ -1,58 +1,81 @@
 services:
+  # Servicio de Zookeeper
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181" # Puerto de Zookeeper
+    networks:
+      - app_network
+    restart: always
+
+  # Servicio de Kafka
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9093
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_BROKER_ID=1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    ports:
+      - "9093:9093" # Puerto de Kafka
+    depends_on:
+      - zookeeper
+    networks:
+      - app_network
+    restart: always
+
+  # Servicio del consumidor de Kafka
   consumer:
     build:
       context: .
       dockerfile: Dockerfile.consumer
+    container_name: kafka-consumer
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - KAFKA_BROKER=kafka:9093 # Dirección de Kafka
+      - NODE_HOST=http://nodejs:3000
     depends_on:
       - kafka
+      - nodejs
+    command: ["sh", "-c", "sleep 20 && wait-for-it nodejs:3000 -- dotnet Consumer.dll"]
     networks:
-      - app-network
+      - app_network
+    restart: always
 
+  # Servicio del productor de Kafka
   producer:
     build:
       context: .
       dockerfile: Dockerfile.producer
+    container_name: kafka-producer
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+      - KAFKA_BROKER=kafka:9093 # Dirección de Kafka
     depends_on:
       - kafka
+    command: ["sh", "-c", "sleep 10 && node producer.js"] # Retraso para asegurar que Kafka esté listo
     networks:
-      - app-network
+      - app_network
+    restart: always
 
-  node:
+  # Servicio de Node.js
+  nodejs:
     build:
-      context: ./node
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: node/Dockerfile
+    container_name: nodejs
     ports:
-      - "3000:3000"
+      - "3000:3000" # Puerto de Node.js
+    depends_on:
+      - kafka
+    command: ["sh", "-c", "sleep 5 && npm start"] # Retraso para esperar a que Kafka esté listo
     networks:
-      - app-network
+      - app_network
+    restart: always
 
-  kafka:
-    image: wurstmeister/kafka:latest
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    networks:
-      - app-network
-
-  zookeeper:
-    image: wurstmeister/zookeeper:latest
-    ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_LISTENER_PORT: 2181
-    networks:
-      - app-network
-
+# Red para comunicación entre servicios
 networks:
-  app-network:
+  app_network:
     driver: bridge
-    attachable: true
