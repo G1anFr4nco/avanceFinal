@@ -14,7 +14,7 @@ Antes de ejecutar este proyecto, asegúrate de que la nueva máquina tenga las s
 Clona el repositorio en tu máquina local con el siguiente comando:
 
 ```bash
-git clone [<url-del-repositorio>](https://github.com/G1anFr4nco/avanceFinal.git)
+git clone https://github.com/G1anFr4nco/avanceFinal.git
 cd avanceFinal
 ```
 Una vez que hayas clonado el repositorio, navega a la carpeta raíz del proyecto y ejecuta los siguientes comandos para construir y levantar los contenedores:
