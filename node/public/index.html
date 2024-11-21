@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Top Canciones</title>
+  <title>SoloGuitar - Top Canciones</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -12,12 +12,17 @@
       color: white;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-x: hidden;
     }
 
     .container-fluid {
       display: flex;
-      height: 100vh;
-      flex-direction: row;
+      flex-grow: 1;
+      margin-top: 60px; /* Ajustar para el header */
+      margin-bottom: 60px; /* Ajustar para el footer */
     }
 
     .left,
@@ -57,39 +62,110 @@
 
     .placeholder-list {
       height: 200px;
-      /* Espacio reservado para la lista */
       overflow-y: auto;
-      /* Permitir desplazamiento si excede el espacio */
       border: 1px solid #2c2c2c;
       padding: 10px;
       background-color: #1c1c1c;
-      /* Fondo para destacar la reserva de espacio */
       border-radius: 5px;
     }
 
     .placeholder-list:empty::before {
       content: 'Cargando...';
-      /* Placeholder para listas vacías */
       color: gray;
       display: block;
       text-align: center;
       padding-top: 50px;
-      /* Ajustar verticalmente */
     }
 
     .top-list {
       height: 300px;
-      /* Mayor altura para las listas de los tops */
       overflow-y: auto;
       border: 1px solid #2c2c2c;
       padding: 10px;
       background-color: #1c1c1c;
       border-radius: 5px;
     }
+
+    /* Estilos para el header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+      z-index: 1000;
+      transition: top 0.3s; /* Transición suave para el header */
+    }
+
+    header.hidden {
+      top: -70px; /* Ocultar el header al hacer scroll hacia abajo */
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header-content h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .header-buttons {
+      display: flex;
+    }
+
+    .header-buttons a {
+      color: #f1f1f1;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+
+    .header-buttons a:hover {
+      color: #ffd700;
+    }
+
+    /* Estilos para el footer */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    footer a {
+      color: #f1f1f1;
+      text-decoration: none;
+    }
   </style>
 </head>
 
 <body>
+  <!-- Header Fijo -->
+  <header id="header">
+    <div class="header-content">
+      <h1>SoloGuitar</h1>
+      <div class="header-buttons">
+        <a href="#">Inicio</a>
+        <a href="#">Top Canciones</a>
+        <a href="#">Artistas</a>
+        <a href="#">Generos</a>
+        <span id="usuarioNombreHeader" class="ml-3"></span> <!-- Nombre de usuario en el header -->
+      </div>
+    </div>
+  </header>
+
   <div class="container-fluid">
     <!-- 1/4 Left: Datos del Usuario -->
     <div class="left">
@@ -127,6 +203,12 @@
     </div>
   </div>
 
+  <!-- Footer Fijo -->
+  <footer>
+    <p>&copy; 2024 SoloGuitar - Todos los derechos reservados</p>
+    <p><a href="#">Contacta con nosotros</a></p>
+  </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.6.1/dist/socket.io.min.js"></script>
   <script>
     const socket = io();
@@ -161,6 +243,7 @@
       document.getElementById('usuarioMusicas').textContent = data.Musicas.join(', ');
       document.getElementById('usuarioArtistas').textContent = data.Artistas.join(', ');
       document.getElementById('usuarioGeneros').textContent = data.Generos.join(', ');
+      document.getElementById('usuarioNombreHeader').textContent = `Usuario: ${data.Nombre}`; // Mostrar nombre en el header
     }
 
     // Escuchar los datos en tiempo real
@@ -228,6 +311,19 @@
 
     // Cargar las canciones al cargar la página
     fetchSpotifySongs();
+
+    // Script para hacer desaparecer el header al hacer scroll
+    let lastScrollTop = 0;
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+      if (currentScroll > lastScrollTop) {
+        header.classList.add('hidden');
+      } else {
+        header.classList.remove('hidden');
+      }
+      lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+    });
   </script>
 </body>
 

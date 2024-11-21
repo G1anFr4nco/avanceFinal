@@ -1,0 +1,18 @@
+# Ignorar carpetas de compilación de .NET
+/Consumer/obj/
+/Consumer/bin/
+
+# Ignorar archivos generados por Node.js
+/node_modules/
+
+# Ignorar archivos de configuración de Visual Studio
+.vs/
+
+# Ignorar archivos de logs y temporales
+*.log
+*.tmp
+*.swp
+
+# Ignorar archivos específicos del sistema operativo
+.DS_Store  # MacOS
+Thumbs.db  # Windows
